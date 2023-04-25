@@ -15,9 +15,15 @@
           </div>
         </div>
         <div class="ml-4 flex items-center md:ml-6">
-          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onclick="location.href='/auth/signIn'">
-            Sign In
-          </button>
+          {%if user %}
+            <button class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full" onclick="location.href='/auth/signOut'">
+              Sign out
+            </button>
+          {% else %}
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onclick="location.href='/auth/signIn'">
+              Sign In
+            </button>
+          {% endif %}
         </div>
     </div>
   </nav>
