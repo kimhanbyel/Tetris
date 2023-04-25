@@ -1,8 +1,8 @@
 module.exports = {
   host: 'localhost',
-  user: 'shoppingmall',
+  user: 'tetris_online',
   password : '1234',
-  database: 'shoppingmall',
+  database: 'tetris_online',
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10, 
