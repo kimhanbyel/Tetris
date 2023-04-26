@@ -11,12 +11,14 @@ nunjucks.configure('views', {
   express: app,
 })
 
+app.use('/static',express.static('public'));
 app.use(session(sessionConfig));
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.get('/', (req, res)=>{res.render('index.html');});
 app.use('/auth', authRouter);
+app.use('/game', gameRouter);
 
 
 app.listen(3000);
