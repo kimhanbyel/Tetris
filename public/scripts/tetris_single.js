@@ -1,16 +1,19 @@
-(function(){
+const tetris_single = () => {
 	"use strict";
-	const canvas=document.getElementById("tetris");
-	const context=canvas.getContext("2d");
+	const canvas = document.querySelector("#tetris");
+	const context = canvas.getContext("2d");
+
 	context.scale(20,20);
-	let makeMatrix=function(w,h){
+	
+	let makeMatrix=function(w,h){  // 가로세로 전체 블럭 배열을 리턴하는 함수
 		const matrix=[];
 		while(h--){
 			matrix.push(new Array(w).fill(0));
 		}
 		return matrix;
 	};
-	let makePiece=function(type){
+	
+	let makePiece=function(type){  //블럭 하나 리턴하는 함수
 		if(type==="t"){
 			return [
 				[0,0,0],
@@ -61,7 +64,8 @@
 			];
 		}
 	};
-	let points=function(){
+	
+	let points=function(){   // 점수 계산하는 함수
 		let rowCount=1;
 		outer:for(let y=area.length-1;y>0;--y){
 			for(let x=0;x<area[y].length;++x){
@@ -76,18 +80,20 @@
 			rowCount*=2;
 		}
 	}
-	let collide=function(area,player){
-		const [m,o]=[player.matrix,player.pos];
+
+	let collide=function(area,player){   // 블럭이 메트릭스 경계와 충돌 감지
+		const [m,o]=[player.matrix,player.pos];  
 		for(let y=0;y<m.length;++y){
 			for(let x=0;x<m[y].length;++x){
 				if(m[y][x]!==0&&(area[y+o.y]&&area[y+o.y][x+o.x])!==0){
-					return true;
+					return true;  // 충돌하면 true
 				}
 			}
 		}
-		return false;
+		return false;   // 충돌 안하면 false
 	};
-	let drawMatrix=function(matrix,offset){
+
+	let drawMatrix=function(matrix,offset){  // 전체 화면을 그리기
 		matrix.forEach((row,y)=>{
 			row.forEach((value,x)=>{
 				if(value!==0){
@@ -100,8 +106,9 @@
 			});
 		});
 	};
-	let merge=function(area,player){
-		player.matrix.forEach((row,y)=>{
+
+	let merge=function(area,player){    // 움직이는 블럭을 배경과 병합
+		player.matrix.forEach((row,y)=>{   
 			row.forEach((value,x)=>{
 				if(value!==0){
 					area[y+player.pos.y][x+player.pos.x]=value;
@@ -109,7 +116,8 @@
 			});
 		});
 	};
-	let rotate=function(matrix,dir){
+
+	let rotate=function(matrix,dir){   // 블럭 회전을 계산
 		for(let y=0;y<matrix.length;++y){
 			for(let x=0;x<y;++x){
 				[
@@ -128,7 +136,8 @@
 			matrix.reverse();
 		}
 	};
-	let playerReset=function(){
+
+	let playerReset=function(){  // 플레이 초기 설정
 		const pieces="ijlostz";
 		player.matrix=makePiece(pieces[Math.floor(Math.random()*pieces.length)]);
 		player.pos.y=0;
@@ -139,7 +148,9 @@
 			gameRun=false;
 		}
 	};
-	let playerDrop=function(){
+
+
+	let playerDrop=function(){   // 블럭 아래로 움직이기
 		player.pos.y++;
 		if(collide(area,player)){
 			player.pos.y--;
@@ -149,13 +160,15 @@
 			updateScore();
 		}
 	};
-	let playerMove=function(dir){
+	
+	let playerMove=function(dir){  // dir에 따라 블럭 움직이기
 		player.pos.x+=dir;
 		if(collide(area,player)){
 			player.pos.x-=dir;
 		}
 	};
-	let playerRotate=function(dir){
+	
+	let playerRotate=function(dir){  // dir에 따라 블럭이 회전
 		const pos=player.pos.x;
 		let offset=1;
 		rotate(player.matrix,dir);
@@ -169,7 +182,8 @@
 			}
 		}
 	};
-	let draw=function(){
+	
+	let draw=function(){         // 전체 화면 그리기;
 		context.clearRect(0,0,canvas.width,canvas.height);
 		context.fillStyle="#000000";
 		context.fillRect(0,0,canvas.width,canvas.height);
@@ -177,9 +191,10 @@
 		drawMatrix(area,{x:0,y:0});
 		drawMatrix(player.matrix,player.pos);
 	};
+
 	let dropInter=100;
 	let time=0;
-	let update=function(){
+	let update=function(){  
 		time++;
 		if(time>=dropInter){
 			playerDrop();
@@ -187,6 +202,7 @@
 		}
 		draw();
 	};
+
 	let updateScore=function(){
 		context.font="bold 1px Comic Sans MS";
 		context.fillStyle="#ffffff";
@@ -194,6 +210,7 @@
 		context.textBaseline="top";
 		context.fillText("Score:"+player.score,0.2,0);
 	};
+
 	let gameOver=function(){
 		clearInterval(gameLoop);
 		context.font="2px Comic Sans MS";
@@ -203,6 +220,7 @@
 		context.fillText("Game Over",(canvas.width/20)/2,(canvas.width/20)/2);
 		document.getElementById("start_game").disabled=false;
 	};
+	
 	const colors=[
 		null,
 		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAxElEQVQ4T2NkYGBg6Jz34T+Ifv3kGIOojBWYBgFkNlgADfTUeTEygjQLC3Iz3Li8G5sanGIauq5gPYwlTdvAtpMLwC6AORlkKjEA2bUYBvDxsYDN+PTpDwOIDaLRAYoByF4AuQCXJmRDCLoAm604DUB3AclhQK4Bb19cYRCW0EGNRrLCgBQXvH3/lQE90aEkJGzpAKYJRIMAzACcXiA2ELEaABIkBoACDwbAXoBlDGI0w9TAMxNIgFCGgjkX5kKYC0DZGQAfwJNr7nKi7AAAAABJRU5ErkJggg==",
@@ -213,7 +231,9 @@
 		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAxElEQVQ4T2NkYGBgeJXf8h9EH/n4ksGGXxxMgwAyGyyABoIWTGZkBGnmExdj2HbrMjY1OMW81HTBehjXJeSCbScXgF0AczLIVGIAsmsxDGAXEQSb8fPNewYQG0SjAxQDkL0AcgEuTciGEHQBNltxGoDuApLDgFwDrnx8w6DDL4IajWSFASku+PTyFQN6okNJSNjSAUwTiAYBmAE4vUBsIGI1ACRIDAAFHgyAvQDLGMRohqmBZyaQAKEMBXMuzIUwF4CyMwBUFZC9raUyoQAAAABJRU5ErkJggg==",
 		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAw0lEQVQ4T2NkYGBg+Hln0n8QfeLSGwYLPREwDQLIbLAAGrAPamJkBGlm4+RjOHTyHjY1OMXszJXAehgPrqsD204uALsA5mSQqcQAZNdiGsDOAzHj5xcGBhAbRKMBFAOQvQB2AQ5NyGYQdgEWW3EagOECIgIBvxeINODK7bcMOqrCqNFIVhiQ4oVf3z8xoCc6lISELR3ANIFoEIAZgNsLlIQByFRiACjwYADsBVjGIEYzTA08M4EECGUomH9hLoS5AJSdASaukfnTt+kFAAAAAElFTkSuQmCC"
 	];
+	
 	const area=makeMatrix(12,20);
+	
 	const player={
 		pos:{
 			x:0,
@@ -222,12 +242,15 @@
 		matrix:null,
 		score:0
 	};
+	
 	const move=1;
 	let gameLoop;
 	let gameRun=false;
+	
 	playerReset();
 	draw();
 	gameOver();
+	
 	document.addEventListener('keydown',function(e){
 		if(e.keyCode===37){
 			playerMove(-move);
@@ -236,7 +259,6 @@
 			playerMove(+move);
 		}
 		else if(e.keyCode===40){
-			console.log(player.pos);
 			if(gameRun){
 				playerDrop();
 			}
@@ -245,6 +267,7 @@
 			playerRotate(-move);
 		}
 	});
+
 	document.getElementById("start_game").onclick=function(){
 		gameRun=true;
 		playerReset();
@@ -259,4 +282,6 @@
 		},10);
 		this.disabled=true;
 	};
-})();
+};
+
+tetris_single();
