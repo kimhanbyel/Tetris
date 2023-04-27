@@ -5,6 +5,8 @@ const nunjucks = require('nunjucks');
 const authRouter = require('./routes/authRouter');
 const gameRouter = require('./routes/gameRouter');
 const app = express();
+const { WebSocketServer } = require("ws");
+const wss = new WebSocketServer({port : 3001});
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -20,5 +22,15 @@ app.get('/', (req, res)=>{res.render('index.html');});
 app.use('/auth', authRouter);
 app.use('/game', gameRouter);
 
+wss.on("connection", ws =>{
+  console.log("연결되었습니다.");
+  
+  ws.on("message", data =>{
+    console.log(data.toString());
+    for(client of wss.clients)
+      client.send(data.toString());
+  } )
+  
+})
 
 app.listen(3000);
