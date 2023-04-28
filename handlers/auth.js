@@ -15,7 +15,7 @@ const signInProcess = (req, res)=>{
       req.session.user = {id : rows[0].id, nick : rows[0].nick};
       res.render('index.html', {user : req.session.user});
     } else {
-      res.render('signIn.html', {msg : "아이디나 비밀번호가 일치하지 않습니다."});
+      res.render('auth/signIn.html', {msg : "아이디나 비밀번호가 일치하지 않습니다."});
     }
   })
 }
@@ -24,14 +24,14 @@ const signUpProcess = (req, res)=>{
   pool.query(`SELECT id FROM users WHERE id='${req.body.email}'`, (err, rows, field)=>{
     if (err) throw err;
     if(rows.length > 0)
-      return res.render('signUp.html', { msg : '이미 존재하는 이메일입니다.'})
+      return res.render('auth/signUp.html', { msg : '이미 존재하는 이메일입니다.'})
     
     let sql = "INSERT INTO users (id, nick, pw, joinDate, lastLogin, tier) VALUES (?, ?, ?, ?, ?, ?)";
     let values = [req.body.email, req.body.nick, req.body.password, 
                   getDateTime(new Date()), getDateTime(new Date()), "마스터"];
     pool.query(sql, values, (err, field)=>{
       if (err) throw err;
-      res.render('signIn.html');
+      res.render('auth/signIn.html');
     })
   })
 }
