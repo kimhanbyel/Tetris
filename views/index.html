@@ -34,7 +34,7 @@
     document.addEventListener('keyup', (e)=>{
       if(e.keyCode == 13) myMsgSend();
     })
-    const ws = new WebSocket("ws://localhost:3001");
+    const ws = new WebSocket("ws://10.94.121.10:3001");
     const myNick = document.querySelector('#myNick').innerHTML;
     const $myMsg = document.querySelector('#myMsg');
     const $chatLog = document.querySelector('#chat-log');
